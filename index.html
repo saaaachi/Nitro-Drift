@@ -146,17 +146,6 @@
             location.reload();
         }
 
-        // 20.1秒リフレッシュ
-        setInterval(() => {
-            ["ad-box-1", "ad-box-2"].forEach(id => {
-                const box = document.getElementById(id);
-                if (box && box.innerHTML.trim() !== "★") {
-                    const tag = box.innerHTML;
-                    box.innerHTML = "";
-                    setTimeout(() => { box.innerHTML = tag; }, 100);
-                }
-            });
-        }, 20100);
     </script>
 </body>
 </html>

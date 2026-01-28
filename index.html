@@ -3,87 +3,146 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Nitro Drift Survival v2</title>
+    <title>Nitro Drift Survival v2.5</title>
     <style>
-        body { margin: 0; overflow: hidden; background: #444; font-family: sans-serif; touch-action: none; }
+        * { box-sizing: border-box; }
+        body { 
+            margin: 0; padding: 0; width: 100%; height: 100%; 
+            overflow: hidden; background: #333; font-family: sans-serif; 
+            touch-action: none; position: fixed;
+        }
         
-        /* 広告エリア：高さを150pxに設定（中サイズバナー対応） */
+        /* 広告エリア：上下150px固定 */
         #ad-top, #ad-bottom { 
-            position: fixed; left: 0; width: 100%; height: 150px; 
-            background: #333; z-index: 100; display: flex; align-items: center; justify-content: center; 
+            position: absolute; left: 0; width: 100%; height: 150px; 
+            background: #222; z-index: 1000; display: flex; align-items: center; justify-content: center;
         }
         #ad-top { top: 0; }
         #ad-bottom { bottom: 0; }
-        
-        iframe { border: none; width: 100%; height: 150px; }
+        iframe { border: none; width: 100%; height: 100%; }
 
-        /* キャンバス：上下の広告を避けて配置 */
-        canvas { display: block; margin-top: 150px; background: #555; }
-        
-        #ui { position: absolute; top: 160px; left: 0; width: 100%; text-align: center; color: white; font-size: 24px; font-weight: bold; pointer-events: none; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); z-index: 10; }
-        
-        #startScreen { 
-            position: absolute; top: 150px; left: 0; width: 100%; height: calc(100vh - 300px); 
-            background: rgba(0,0,0,0.85); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 50; color: white;
+        /* メインコンテナ（ゲームエリアを広告から隔離） */
+        #main-container {
+            position: absolute;
+            top: 150px; bottom: 150px; left: 0; right: 0;
+            background: #444; overflow: hidden; z-index: 10;
         }
-        #goButton { padding: 15px 45px; font-size: 24px; background: #f44336; border: none; border-radius: 50px; color: white; font-weight: bold; cursor: pointer; box-shadow: 0 4px #b71c1c; }
-        #best-info { margin-top: 15px; font-weight: bold; }
+
+        canvas { display: block; background: #555; width: 100%; height: 100%; }
+        
+        #ui { 
+            position: absolute; top: 10px; left: 0; width: 100%; 
+            text-align: center; color: white; font-size: 24px; font-weight: bold; 
+            pointer-events: none; text-shadow: 2px 2px 4px rgba(0,0,0,0.8); z-index: 20; 
+        }
+        
+        /* スタート・ゲームオーバー画面 */
+        #menuScreen { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.9); display: flex; flex-direction: column; 
+            align-items: center; justify-content: center; z-index: 50; color: white; padding: 10px;
+        }
+
+        #ad-middle-container { 
+            width: 300px; height: 250px; background: #222; display: none; 
+            justify-content: center; align-items: center; flex-shrink: 0; margin: 10px 0;
+        }
+        
+        #menuHeader { text-align: center; margin-bottom: 10px; }
+        #goButton { 
+            padding: 12px 40px; font-size: 20px; background: #f44336; border: none; 
+            border-radius: 50px; color: white; font-weight: bold; cursor: pointer; 
+            box-shadow: 0 4px #b71c1c; width: 220px;
+        }
+        .link-btn {
+            margin-top: 10px; padding: 12px 0; font-size: 16px; background: #ff4081; 
+            border: none; border-radius: 50px; color: white; font-weight: bold; 
+            text-decoration: none; width: 220px; text-align: center; display: block;
+            box-shadow: 0 4px #c2185b;
+        }
+        .best-info { margin-top: 10px; font-weight: bold; color: #ffeb3b; }
     </style>
 </head>
 <body>
 
     <div id="ad-top"><iframe id="frame-top" src="ad.html"></iframe></div>
-    <div id="ad-bottom"><iframe id="frame-bottom" src="ad.html"></iframe></div>
 
-    <div id="startScreen">
-        <h1 style="color:#f44336; margin-bottom:10px; font-style: italic;">NITRO DRIFT</h1>
-        <p style="margin-bottom: 25px;">左右スライドで障害物を避けろ！</p>
-        <button id="goButton">START RACE</button>
-        <p id="best-info">BEST RECORD: <span id="best-ui">0</span>km</p>
+    <div id="main-container">
+        <div id="ui">0 km</div>
+        <canvas id="gameCanvas"></canvas>
+
+        <div id="menuScreen">
+            <div id="menuHeader">
+                <h1 style="color:#f44336; margin:0; font-style: italic; font-size: 28px;">NITRO DRIFT</h1>
+                <p style="margin:5px 0; font-size: 14px;">左右スライドで障害物を避けろ！</p>
+                <div class="best-info">BEST: <span id="best-ui">0</span>km</div>
+            </div>
+
+            <div id="ad-middle-container">
+                <script src="https://adm.shinobi.jp/s/1e6de436ea850948e238e975a93767eb"></script>
+            </div>
+
+            <div id="btnGroup" style="display: flex; flex-direction: column; align-items: center;">
+                <button id="goButton">START RACE</button>
+                <a href="https://saaaachi.github.io/Slime-Archer/" class="link-btn">他のゲームはこちら</a>
+            </div>
+        </div>
     </div>
 
-    <div id="ui">0 km</div>
-    <canvas id="gameCanvas"></canvas>
+    <div id="ad-bottom"><iframe id="frame-bottom" src="ad.html"></iframe></div>
 
     <script>
         const canvas = document.getElementById("gameCanvas");
         const ctx = canvas.getContext("2d");
         const ui = document.getElementById("ui");
-        const startScreen = document.getElementById("startScreen");
+        const menuScreen = document.getElementById("menuScreen");
+        const menuHeader = document.getElementById("menuHeader");
+        const adMid = document.getElementById("ad-middle-container");
         const bestUi = document.getElementById("best-ui");
+        const goButton = document.getElementById("goButton");
 
-        // キャンバスサイズ設定（上下150pxずつ引く）
-        canvas.width = window.innerWidth;
-        canvas.height = window.innerHeight - 300;
+        // キャンバスサイズを親要素（main-container）に合わせる
+        function resize() {
+            const container = document.getElementById("main-container");
+            canvas.width = container.clientWidth;
+            canvas.height = container.clientHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
 
         let score = 0;
         let bestScore = localStorage.getItem("nitro_drift_best") || 0;
         let gameActive = false;
-        let player = { x: canvas.width / 2, y: canvas.height - 80, w: 34, h: 55 };
+        let player = { x: 0, y: 0, w: 34, h: 55 };
         let enemies = [];
+        let enemyTimer;
+        
         bestUi.innerText = bestScore;
 
-        document.getElementById("goButton").onclick = () => {
-            startScreen.style.display = "none";
+        goButton.onclick = () => {
+            menuScreen.style.display = "none";
+            adMid.style.display = "none";
+            menuHeader.style.display = "block";
             gameActive = true;
             score = 0;
             enemies = [];
+            player.x = canvas.width / 2;
+            player.y = canvas.height - 80;
             spawnEnemy();
             update();
         };
 
-        // 操作：スライドで自車を動かす
         function handleMove(e) {
             if(!gameActive) return;
+            const rect = canvas.getBoundingClientRect();
             const clientX = e.touches ? e.touches[0].clientX : e.clientX;
-            player.x = clientX;
-            // 画面外防止
+            player.x = clientX - rect.left;
             if(player.x < player.w/2) player.x = player.w/2;
             if(player.x > canvas.width - player.w/2) player.x = canvas.width - player.w/2;
         }
 
-        window.addEventListener("touchmove", (e) => { handleMove(e); e.preventDefault(); }, {passive: false});
-        window.addEventListener("mousemove", handleMove);
+        canvas.addEventListener("touchmove", (e) => { handleMove(e); e.preventDefault(); }, {passive: false});
+        canvas.addEventListener("mousemove", handleMove);
 
         function spawnEnemy() {
             if(!gameActive) return;
@@ -93,33 +152,32 @@
                 y: -70,
                 w: enemyWidth,
                 h: 52,
-                speed: 5 + (score / 100) // 徐々に加速
+                speed: 5 + (score / 100)
             });
-            // 出現間隔を徐々に短く
             let interval = Math.max(180, 550 - (score / 2));
-            setTimeout(spawnEnemy, interval);
+            enemyTimer = setTimeout(spawnEnemy, interval);
         }
 
         function update() {
             if(!gameActive) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // 道路の白線（流れる背景）
+            // 背景（白線）
             ctx.strokeStyle = "rgba(255,255,255,0.6)";
             ctx.setLineDash([30, 30]);
-            ctx.lineDashOffset = -(score * 5); // スコアに応じてスピード感
+            ctx.lineDashOffset = -(score * 10);
             ctx.lineWidth = 4;
             ctx.beginPath();
             ctx.moveTo(canvas.width / 2, 0);
             ctx.lineTo(canvas.width / 2, canvas.height);
             ctx.stroke();
 
-            // 自車描画（スポーツカー風）
+            // 自車
             ctx.fillStyle = "#2196F3"; 
             ctx.fillRect(player.x - player.w/2, player.y, player.w, player.h);
-            ctx.fillStyle = "#0D47A1"; // 屋根部分
+            ctx.fillStyle = "#0D47A1";
             ctx.fillRect(player.x - player.w/2 + 5, player.y + 15, player.w - 10, 20);
-            ctx.fillStyle = "black"; // タイヤ
+            ctx.fillStyle = "black";
             ctx.fillRect(player.x - player.w/2 - 3, player.y+8, 4, 12);
             ctx.fillRect(player.x + player.w/2 - 1, player.y+8, 4, 12);
             ctx.fillRect(player.x - player.w/2 - 3, player.y+35, 4, 12);
@@ -129,13 +187,12 @@
                 let en = enemies[i];
                 en.y += en.speed;
                 
-                // 敵車描画（赤いライバル車）
+                // 敵車
                 ctx.fillStyle = "#f44336";
                 ctx.fillRect(en.x, en.y, en.w, en.h);
                 ctx.fillStyle = "#B71C1C";
                 ctx.fillRect(en.x + 5, en.y + 15, en.w - 10, 20);
 
-                // 当たり判定
                 if (player.x - player.w/2 + 4 < en.x + en.w &&
                     player.x + player.w/2 - 4 > en.x &&
                     player.y + 4 < en.y + en.h &&
@@ -143,29 +200,32 @@
                     gameOver();
                     return;
                 }
-
-                if(en.y > canvas.height) {
-                    enemies.splice(i, 1);
-                }
+                if(en.y > canvas.height) enemies.splice(i, 1);
             }
             
-            score += 0.2; // 距離が進む
+            score += 0.2;
             ui.innerText = Math.floor(score) + " km";
             requestAnimationFrame(update);
         }
 
         function gameOver() {
             gameActive = false;
+            clearTimeout(enemyTimer);
             let finalScore = Math.floor(score);
             if(finalScore > bestScore) {
                 bestScore = finalScore;
                 localStorage.setItem("nitro_drift_best", bestScore);
+                bestUi.innerText = bestScore;
             }
-            alert("COLLISION!\nRECORD: " + finalScore + "km");
-            location.reload();
+            
+            menuTitle.innerText = "COLLISION!";
+            menuHeader.style.display = "none"; // 広告スペースを確保するためヘッダーを隠す
+            goButton.innerText = "RETRY";
+            adMid.style.display = "flex"; 
+            menuScreen.style.display = "flex";
         }
 
-        // 🚀 30秒ごとに広告を転生（ad.html 読み直し）
+        // 広告リフレッシュ
         setInterval(() => {
             ["frame-top", "frame-bottom"].forEach(id => {
                 const f = document.getElementById(id);
